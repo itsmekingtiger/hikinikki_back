@@ -1,7 +1,6 @@
 package com.gehirn.or.kr.hikinikki.nikki;
 
-import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -14,6 +13,7 @@ public class Nikki {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(length = 2000)
     private String content;
 
     private Date createdAt;
