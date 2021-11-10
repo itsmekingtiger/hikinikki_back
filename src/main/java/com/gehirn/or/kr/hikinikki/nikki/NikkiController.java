@@ -1,7 +1,9 @@
 package com.gehirn.or.kr.hikinikki.nikki;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,8 +35,9 @@ public class NikkiController {
         if (pageNum == null) {
             pageNum = 0;
         }
+        var pageReq = PageRequest.of(pageNum, nikkiPerPage, Sort.by("createdAt").descending());
 
-        return nikkiRepo.findAll(Pageable.ofSize(nikkiPerPage).withPage(pageNum)).toList();
+        return nikkiRepo.findAll(pageReq).getContent();
     }
 
     @PostMapping
