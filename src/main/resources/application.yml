@@ -1,3 +1,5 @@
+logging.level.org.hibernate.SQL: DEBUG
+
 spring:
   h2:
     console:
@@ -9,14 +11,17 @@ spring:
     password:
     driverClassName: org.h2.Driver
   jpa:
-    hibernate:
-      ddl-auto: update
-#    database-platform: org.hibernate.dialect.H2Dialect
+    properties:
+      hibernate:
+        show-sql: true
+        format_sql: true
+        ddl-auto: update
 
 ## did not work, use spring.jpa.hibernate.ddl-auto
 #hibernate:
+#  show-sql: true
 #  hbm2ddl:
-#    auto: create
+#    auto: update
 
 ## enable gzip http response
 server:
