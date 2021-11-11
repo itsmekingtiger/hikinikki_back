@@ -2,21 +2,17 @@ package com.gehirn.or.kr.hikinikki.nikki;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/nikki")
 @RequiredArgsConstructor
 public class NikkiController {
-    private final NikkiRepo nikkiRepo;
-
     static int nikkiPerPage = 10;
+    private final NikkiRepo nikkiRepo;
 
     @GetMapping("/{id}")
     public ResponseEntity<Nikki> getNikki(@PathVariable("id") Long id) {
@@ -29,15 +25,23 @@ public class NikkiController {
     }
 
     @GetMapping("/recent")
-    public List<Nikki> getRecentNikki(
+    public NikkiPageData getRecentNikki(
             @RequestParam(value = "page", required = false) Integer pageNum
     ) {
         if (pageNum == null) {
             pageNum = 0;
         }
         var pageReq = PageRequest.of(pageNum, nikkiPerPage, Sort.by("createdAt").descending());
+        var page = nikkiRepo.findAll(pageReq);
 
-        return nikkiRepo.findAll(pageReq).getContent();
+        var nikkiPageData = new NikkiPageData
+                .NikkiPageDataBuilder()
+                .nikkis(page.getContent())
+                .totalPage(page.getTotalPages())
+                .currentPage(pageNum)
+                .build();
+
+        return nikkiPageData;
     }
 
     @PostMapping
