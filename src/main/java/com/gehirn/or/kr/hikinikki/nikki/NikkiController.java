@@ -1,11 +1,15 @@
 package com.gehirn.or.kr.hikinikki.nikki;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gehirn.or.kr.hikinikki.nnn.NNNService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.socket.TextMessage;
 
 @RestController
 @RequestMapping("/api/nikki")
@@ -13,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 public class NikkiController {
     static int nikkiPerPage = 10;
     private final NikkiRepo nikkiRepo;
+    private final NNNService nnnService;
+    private final ObjectMapper objectMapper;
 
     @GetMapping("/{id}")
     public ResponseEntity<Nikki> getNikki(@PathVariable("id") Long id) {
@@ -46,6 +52,14 @@ public class NikkiController {
 
     @PostMapping
     public Nikki postNikki(@RequestBody Nikki nikki) {
-        return nikkiRepo.save(nikki);
+        try {
+            final var new_nikki = nikkiRepo.save(nikki);
+            var msg = new TextMessage(objectMapper.writeValueAsString(new_nikki));
+            nnnService.broadcast(msg);
+            return new_nikki;
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

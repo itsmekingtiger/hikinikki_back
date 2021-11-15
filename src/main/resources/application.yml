@@ -1,4 +1,4 @@
-logging.level.org.hibernate.SQL: DEBUG
+#logging.level.org.hibernate.SQL: DEBUG
 
 spring:
   h2:
@@ -13,8 +13,8 @@ spring:
   jpa:
     properties:
       hibernate:
-        show-sql: true
-        format_sql: true
+#        show-sql: true
+#        format_sql: true
         ddl-auto: update
 
 ## did not work, use spring.jpa.hibernate.ddl-auto
